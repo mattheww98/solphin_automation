@@ -1,6 +1,6 @@
 # Solphin automation
 
-This directory turns the workflow in `~/src/solphin/tutorial/full_workflow_tutorial.ipynb`
+This directory turns the workflow in the [solphin package](https://github.com/SMTG-Bham/solphin/tree/main)
 into two command-line scripts. A POSCAR or CIF plus a JSON file are the only initial inputs.
 
 The calculation sequence is:
