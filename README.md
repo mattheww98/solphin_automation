@@ -1,7 +1,8 @@
 # Solphin automation
 
-This directory turns the workflow in the [solphin package](https://github.com/SMTG-Bham/solphin/tree/main)
-into two command-line scripts. A POSCAR or CIF plus a JSON file are the only initial inputs.
+This directory turns the tutorial notebook in the [solphin package](https://github.com/SMTG-Bham/solphin/tree/main),
+including the use of [vaspup2.0](https://github.com/kavanase/vaspup2.0), into two command-line scripts. 
+A POSCAR or CIF plus a JSON file are the only initial inputs.
 
 The calculation sequence is:
 
