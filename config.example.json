@@ -1,0 +1,71 @@
+{
+  "project_name": "CdTe",
+  "workdir": "./CdTe_workflow",
+  "functional": "HSE06",
+  "encut": 450,
+  "kspacing": 0.2,
+  "potcar_functional": "PBE_54",
+  "incar": {},
+  "scheduler": {
+    "job_template": null,
+    "job_filename": "job"
+  },
+  "convergence": {
+    "enabled": true,
+    "parameters_confirmed": false,
+    "generate_directories": true,
+    "run_vasp": false,
+    "command": "generate-converge",
+    "submit_cmd": "sbatch",
+    "job_name_flag": "-J",
+    "encut": {
+      "enabled": true,
+      "start": 300,
+      "stop": 700,
+      "step": 50
+    },
+    "kpoints": [[3, 3, 3], [4, 4, 4], [5, 5, 5], [6, 6, 6]],
+    "seed_kpoints": [1, 1, 1],
+    "incar": {
+      "ISPIN": 1,
+      "ISMEAR": 0,
+      "SIGMA": 0.05
+    }
+  },
+  "relax": {
+    "directory": "relax",
+    "patches": ["relax_cell", "tight_relax"],
+    "incar": {}
+  },
+  "optics": {
+    "directory": "optics",
+    "patches": ["optics"],
+    "incar": {
+      "ISPIN": 1,
+      "ISMEAR": -5,
+      "SIGMA": 0.02,
+      "LORBIT": 14
+    }
+  },
+  "bands": {
+    "directory": "bands",
+    "functional": "PBEsol",
+    "splits": 1,
+    "path_definition": "bradcrack",
+    "path_density": 60,
+    "patches": [],
+    "incar": {}
+  },
+  "analysis": {
+    "directory": "results",
+    "spectrum": "AM1.5",
+    "cell_temperature": 300,
+    "carrier_lifetime": 2.5e-7,
+    "carrier_mobility": 10,
+    "dopant_density": 1e16,
+    "dos_carrier": "electrons",
+    "dos_gaussian": 0.05,
+    "blank_qi": 1.0,
+    "blank_refractive_index": 3.5
+  }
+}
