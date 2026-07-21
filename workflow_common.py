@@ -19,6 +19,7 @@ DEFAULTS: dict[str, Any] = {
     "scheduler": {"job_template": None, "job_filename": "job"},
     "convergence": {
         "enabled": True,
+        "functional": "PBEsol",
         "parameters_confirmed": False,
         "generate_directories": True,
         "run_vasp": False,

@@ -152,10 +152,15 @@ class WorkflowTests(unittest.TestCase):
                 prepare_workflow,
                 "solphin_modules",
                 return_value=(FakeBands, FakeVaspInputs),
-            ):
+            ), patch.object(
+                FakeVaspInputs,
+                "write_vasp_calculation",
+                wraps=FakeVaspInputs.write_vasp_calculation,
+            ) as writer:
                 prepare_workflow.prepare_convergence({}, config, config_path, root)
 
             convergence = root / "convergence"
+            self.assertEqual(writer.call_args.kwargs["recipe"], "PBEsol")
             self.assertTrue((convergence / "cutoff_converge/e300/INCAR").is_file())
             self.assertTrue((convergence / "cutoff_converge/e350/INCAR").is_file())
             self.assertTrue((convergence / "kpoint_converge/k2,2,2/KPOINTS").is_file())

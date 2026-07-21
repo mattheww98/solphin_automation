@@ -12,6 +12,7 @@
   },
   "convergence": {
     "enabled": true,
+    "functional": "PBEsol",
     "parameters_confirmed": false,
     "generate_directories": true,
     "run_vasp": false,

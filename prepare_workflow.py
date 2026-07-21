@@ -102,7 +102,7 @@ def prepare_convergence(
             config_path,
             "convergence",
             input_dir,
-            recipe=config["functional"],
+            recipe=settings["functional"],
             extra_incar={"ENCUT": config["encut"], "KSPACING": config["kspacing"]},
         )
         incar_path = input_dir / "INCAR"

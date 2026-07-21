@@ -40,6 +40,8 @@ particular:
 - set `scheduler.job_template` to a batch script if you want it copied into every calculation;
 - the example uses `PBE_54`, matching the potentials currently installed under
   `~/src/pmg_potcars/POT_GGA_PAW_PBE_54`;
+- `convergence.functional` defaults to the cheaper `PBEsol`, independently of the main
+  `functional` used for relaxation and optics;
 - keep `convergence.run_vasp` false to generate without submitting;
 - set it true only after providing a job template and the correct `submit_cmd` and
   `job_name_flag`;
@@ -55,6 +57,25 @@ cd ~/solphin_automation
 cp config.example.json config.json
 python prepare_workflow.py /path/to/POSCAR config.json
 ```
+
+The script does not need to be copied into or launched from the calculation directory. On
+the cluster, this is supported:
+
+```bash
+cd /path/to/scratch/my_material
+python ~/src/solphin_automation/prepare_workflow.py POSCAR config.json
+```
+
+Paths resolve as follows:
+
+- `POSCAR` or a relative CIF path is resolved from the current working directory;
+- `config.json` is resolved from the current working directory;
+- a relative `workdir` and `scheduler.job_template` inside the JSON are resolved relative
+  to the directory containing `config.json`;
+- Python automatically adds the script's own directory to its import path, so
+  `workflow_common.py` is found next to `prepare_workflow.py`;
+- the configured vaspup command is found through `PATH`, with
+  `~/src/vaspup2.0/bin` used only as a fallback.
 
 The default `--stage auto` is safe to rerun. Initially it prepares convergence inputs and
 waits. After the convergence jobs finish, run `data-converge`, update the production
