@@ -59,8 +59,7 @@ cp config.example.json config.json
 python prepare_workflow.py /path/to/POSCAR config.json
 ```
 
-The script does not need to be copied into or launched from the calculation directory. On
-the cluster, this is supported:
+The script does not need to be copied into or launched from the calculation directory. E.g.
 
 ```bash
 cd /path/to/scratch/my_material
@@ -79,13 +78,15 @@ Paths resolve as follows:
   `~/src/vaspup2.0/bin` used only as a fallback.
 
 The default `--stage auto` is safe to rerun. Initially it prepares convergence inputs and
-waits. After the convergence jobs finish, run `data-converge`, update the production
+waits. After the convergence jobs finish, run `data-converge` in the `kpoint_converge` and 
+`cutoff_converge` directories as per Vaspup2.0 instructions, update the production
 `encut`/`kspacing`, set `convergence.parameters_confirmed` to `true`, and rerun the same
 command to prepare relaxation:
 
 ```bash
 python prepare_workflow.py /path/to/POSCAR config.json
 ```
+N.B. to find appropriate kspacing from the converged k-grid, use [the provided script](./kgrid_to_kspacing.py).
 
 Once `relax/CONTCAR` exists it prepares optics. Once the optics calculation supplies
 `CHGCAR` (GGA bands) or `IBZKPT` (hybrid bands), it prepares the band calculation.
