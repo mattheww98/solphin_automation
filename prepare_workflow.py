@@ -89,6 +89,10 @@ def prepare_convergence(
     directory = root / "convergence"
     input_dir = directory / "input"
     if target_is_prepared(input_dir) and (directory / "CONFIGURED").is_file():
+        calculation_dirs = [input_dir]
+        calculation_dirs.extend(sorted(path for path in (directory / "cutoff_converge").glob("*") if path.is_dir()))
+        calculation_dirs.extend(sorted(path for path in (directory / "kpoint_converge").glob("*") if path.is_dir()))
+        copy_job(config, config_path, calculation_dirs)
         print(f"SKIP convergence (already prepared): {directory}")
         return
     if not target_is_prepared(input_dir):
@@ -148,6 +152,7 @@ def prepare_convergence(
 def prepare_relax(structure: Any, config: dict[str, Any], config_path: Path, root: Path) -> None:
     directory = root / config["relax"]["directory"]
     if target_is_prepared(directory):
+        copy_job(config, config_path, [directory])
         print(f"SKIP relax (already prepared): {directory}")
         return
     write_calculation(
@@ -171,6 +176,7 @@ def prepare_optics(config: dict[str, Any], config_path: Path, root: Path) -> Non
     _, vasp_inputs = solphin_modules()
     directory = root / config["optics"]["directory"]
     if target_is_prepared(directory):
+        copy_job(config, config_path, [directory])
         print(f"SKIP optics (already prepared): {directory}")
         return
     structure = relaxed_structure(config, root, vasp_inputs)
@@ -190,6 +196,8 @@ def prepare_bands(config: dict[str, Any], config_path: Path, root: Path) -> None
     settings = config["bands"]
     directory = root / settings["directory"]
     if target_is_prepared(directory) or any(directory.glob("split-*/INCAR")):
+        calc_dirs = sorted(path.parent for path in directory.glob("split-*/INCAR"))
+        copy_job(config, config_path, calc_dirs or [directory])
         print(f"SKIP bands (already prepared): {directory}")
         return
     structure = relaxed_structure(config, root, vasp_inputs)

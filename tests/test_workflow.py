@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import tempfile
@@ -13,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import prepare_workflow
 import analyse_workflow
+import kgrid_to_kspacing
 from workflow_common import WorkflowError, load_config
 
 
@@ -123,6 +125,19 @@ class FakeFinal:
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_kgrid_to_kspacing_interval(self):
+        lower, upper, directional = kgrid_to_kspacing.kspacing_interval(
+            (1.2, 1.2, 0.8), (6, 6, 4)
+        )
+        self.assertAlmostEqual(lower, 0.2)
+        self.assertAlmostEqual(upper, 0.24)
+        for value in directional:
+            self.assertAlmostEqual(value, 0.2)
+
+    def test_kgrid_values_must_be_positive(self):
+        with self.assertRaises(argparse.ArgumentTypeError):
+            kgrid_to_kspacing.positive_integer("0")
+
     def make_config(self, directory: Path, overrides=None):
         data = {"project_name": "test", "workdir": "work"}
         if overrides:
@@ -147,6 +162,7 @@ class WorkflowTests(unittest.TestCase):
                     }
                 },
             )
+            (config_path.parent / "job").write_text("#!/bin/bash\n", encoding="utf-8")
             root.mkdir()
             with patch.object(
                 prepare_workflow,
@@ -170,6 +186,21 @@ class WorkflowTests(unittest.TestCase):
                 "3 3 3",
             )
             self.assertNotIn("KSPACING", (convergence / "input/INCAR").read_text())
+            self.assertEqual(
+                (convergence / "input/job").read_text(encoding="utf-8"),
+                "#!/bin/bash\n",
+            )
+            (config_path.parent / "job").write_text("#!/bin/bash\n# updated\n", encoding="utf-8")
+            with patch.object(
+                prepare_workflow,
+                "solphin_modules",
+                return_value=(FakeBands, FakeVaspInputs),
+            ):
+                prepare_workflow.prepare_convergence({}, config, config_path, root)
+            self.assertEqual(
+                (convergence / "cutoff_converge/e300/job").read_text(encoding="utf-8"),
+                "#!/bin/bash\n# updated\n",
+            )
 
     def test_relax_optics_and_split_bands_follow_prerequisites(self):
         with tempfile.TemporaryDirectory() as tmp:

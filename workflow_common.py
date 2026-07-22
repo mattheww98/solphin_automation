@@ -127,11 +127,16 @@ def ensure_new_target(directory: Path, allowed_files: set[str] | None = None) ->
 
 def copy_job(config: dict[str, Any], config_path: Path, directories: list[Path]) -> None:
     scheduler = config["scheduler"]
-    template = resolve_config_path(scheduler.get("job_template"), config_path)
-    if template is None:
-        return
-    require_file(template, "scheduler.job_template")
     filename = scheduler.get("job_filename", "job")
+    configured_template = scheduler.get("job_template")
+    if configured_template is None:
+        # Convenient default: discover a batch script kept beside config.json.
+        template = config_path.parent / filename
+        if not template.is_file():
+            return
+    else:
+        template = resolve_config_path(configured_template, config_path)
+        require_file(template, "scheduler.job_template")
     for directory in directories:
         shutil.copy2(template, directory / filename)
 
