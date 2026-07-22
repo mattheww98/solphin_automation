@@ -86,7 +86,11 @@ command to prepare relaxation:
 ```bash
 python prepare_workflow.py /path/to/POSCAR config.json
 ```
-N.B. to find appropriate kspacing from the converged k-grid, use [the provided script](./kgrid_to_kspacing.py).
+N.B. to find appropriate kspacing from the converged k-grid, use [the provided script](./kgrid_to_kspacing.py).  
+e.g.
+```bash
+python ~/src/solphin_automation/kgrid_to_kspacing.py POSCAR 6 6 4
+```
 
 Once `relax/CONTCAR` exists it prepares optics. Once the optics calculation supplies
 `CHGCAR` (GGA bands) or `IBZKPT` (hybrid bands), it prepares the band calculation.
